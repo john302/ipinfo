@@ -7,10 +7,9 @@
 #include <sys/socket.h>
 #include <sys/utsname.h>
 #include <sys/ioctl.h>
-#include <netinet/in.h>
 #include <net/if.h>
 #include <stdlib.h> /* For the system() function. */
-#include <arpa/inet.h>
+#include <gnu/libc-version.h> /* Get the GNU Libc version. */
 
 #include "info.h"
 
@@ -34,6 +33,7 @@ int main (int argc, char **argv) {
 
 	if (argc > 1 && strncmp (argv[1], "--system", BUF) == 0) {
 		information();
+		printf("GNU libc version: %s\n", gnu_get_libc_version());
 	}
 
 	if (argc > 1 && strncmp (argv[1], "--hostname", BUF) == 0) {
@@ -42,7 +42,11 @@ int main (int argc, char **argv) {
 	}
 
 	if (argc > 1 && strncmp (argv[1], "--ip", BUF) == 0) {
-		system("ip route get 8.8.8.8 | awk 'NR==1 {print $NF}'");
+		//system("ip route get 8.8.8.8 | awk 'NR==1 {print $NF}'");
+		printf("Internet facing IP address.\n");
+		execl("/usr/bin/curl", "/usr/bin/curl", "ipinfo.io/ip",NULL);
+		printf("LAN IP address.\n");
+		execl("/bin/ip", "/bin/ip", "get 8.8.8.8 | awk 'NR==1 {print $NF}'",NULL);
 	}
 
 	if (argc > 1 && strncmp (argv[1], "--disks", BUF) == 0) {

@@ -9,6 +9,7 @@ TARGET = ip
 CFLAGS =-DGNU_SOURCE -Wall -finline-functions \
 -fforce-addr
 LDFLAGS =-shared-libgcc
+KDIR ?= /lib/modules/`uname -r`/build
 
 # Our compiler
 CXX = gcc
