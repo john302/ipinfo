@@ -46,11 +46,11 @@ int main (int argc, char **argv) {
 		printf("Internet facing IP address.\n");
 		execl("/usr/bin/curl", "/usr/bin/curl", "ipinfo.io/ip",NULL);
 		printf("LAN IP address.\n");
-		execl("/bin/ip", "/bin/ip", "get 8.8.8.8 | awk 'NR==1 {print $NF}'",NULL);
+		execl("/bin/hostname", "/bin/hostname", "-i",NULL);
 	}
 
 	if (argc > 1 && strncmp (argv[1], "--disks", BUF) == 0) {
-		system("lsblk -d");
+		execl("/bin/lsblk", "/bin/lsblk", "-d",NULL);
 	}
 
 	if (argc > 1 && strncmp (argv[1], "--linux", BUF) == 0) {
