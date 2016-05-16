@@ -77,4 +77,10 @@ int menu(void) {
 	return EXIT_SUCCESS;
 }
 
+int internetip(void) {
+	printf("Internet facing IP address.\n");
+	execl("/usr/bin/curl", "/usr/bin/curl", "ipinfo.io/ip",NULL);
+	return EXIT_SUCCESS;
+};
+
 #endif /* info.h */

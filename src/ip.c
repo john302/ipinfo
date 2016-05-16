@@ -26,6 +26,7 @@ int main (int argc, char **argv) {
 	/* Getting information about the routing table. */
 
 	if (argc > 1 && strncmp (argv[1], "--arp", BUF) == 0) {
+		// Print the routing table.
 		printf ("This is the routing table.\n");
 		char *arg[] = { "cat", "/proc/net/arp", NULL };
 		execvp (arg[0], arg);
@@ -33,27 +34,31 @@ int main (int argc, char **argv) {
 
 	if (argc > 1 && strncmp (argv[1], "--system", BUF) == 0) {
 		information();
+		// Print the GNU Libc version.
 		printf("GNU libc version: %s\n", gnu_get_libc_version());
 	}
 
 	if (argc > 1 && strncmp (argv[1], "--hostname", BUF) == 0) {
+		// Get the system hostname.
 		gethostname(hostname, sizeof hostname);
 		printf("Hostname: %s\n", hostname);
 	}
 
 	if (argc > 1 && strncmp (argv[1], "--ip", BUF) == 0) {
-		printf("Internet facing IP address.\n");
-		execl("/usr/bin/curl", "/usr/bin/curl", "ipinfo.io/ip",NULL);
+		// Get the LAN IP address.
 		printf("LAN IP address.\n");
 		system("ip route get 8.8.8.8 | awk 'NR==1 {print $NF}'");
-
+		// Get the Internet facing IP address.
+		internetip();
 	}
 
 	if (argc > 1 && strncmp (argv[1], "--disks", BUF) == 0) {
+		// List the hard disks attached to the system.
 		execl("/bin/lsblk", "/bin/lsblk", "-d",NULL);
 	}
 
 	if (argc > 1 && strncmp (argv[1], "--linux", BUF) == 0) {
+		// Print system information.
 		stuff();
 	}
 
