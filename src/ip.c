@@ -42,11 +42,11 @@ int main (int argc, char **argv) {
 	}
 
 	if (argc > 1 && strncmp (argv[1], "--ip", BUF) == 0) {
-		//system("ip route get 8.8.8.8 | awk 'NR==1 {print $NF}'");
 		printf("Internet facing IP address.\n");
 		execl("/usr/bin/curl", "/usr/bin/curl", "ipinfo.io/ip",NULL);
 		printf("LAN IP address.\n");
-		execl("/bin/hostname", "/bin/hostname", "-i",NULL);
+		system("ip route get 8.8.8.8 | awk 'NR==1 {print $NF}'");
+
 	}
 
 	if (argc > 1 && strncmp (argv[1], "--disks", BUF) == 0) {
