@@ -10,6 +10,7 @@
 #include <net/if.h>
 #include <stdlib.h> /* For the system() function. */
 #include <gnu/libc-version.h> /* Get the GNU Libc version. */
+#include <pwd.h>
 
 #include "info.h"
 
@@ -18,6 +19,8 @@
 int main (int argc, char **argv) {
 
 	char hostname[128];
+	struct passwd *passwd;
+	passwd = getpwuid ( getuid());
 
 	if (argv[1] == NULL) {
 		menu();
@@ -60,6 +63,12 @@ int main (int argc, char **argv) {
 	if (argc > 1 && strncmp (argv[1], "--linux", BUF) == 0) {
 		// Print system information.
 		stuff();
+
+		puts("");
+		fprintf(stdout, "Login Name is: %s\n", passwd->pw_name);
+		fprintf(stdout, "Login shell is: %s\n", passwd->pw_shell);
+		fprintf(stdout, "User home is: %s\n", passwd->pw_dir);
+		fprintf(stdout, "User information: %s\n", passwd->pw_gecos);
 	}
 
 	return 0;
