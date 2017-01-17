@@ -2,12 +2,11 @@
 
 .PHONY: all clean
 
-TARGET = ip
+TARGET = ipinfo
 
 # Check debug options
 
-CFLAGS =-DGNU_SOURCE -Wall -finline-functions \
--fforce-addr
+CFLAGS =-DGNU_SOURCE -Wall
 LDFLAGS =-shared-libgcc
 KDIR ?= /lib/modules/`uname -r`/build
 
