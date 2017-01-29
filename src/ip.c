@@ -20,6 +20,8 @@
 #include <stdlib.h> /* For the system() function. */
 #include <gnu/libc-version.h> /* Get the GNU Libc version. */
 #include <pwd.h>
+#include <sys/types.h>
+#include <ifaddrs.h>
 
 #include "info.h"
 
@@ -61,7 +63,8 @@ int main (int argc, char **argv) {
 	if (argc > 1 && strncmp (argv[1], "--ip", BUF) == 0) {
 		// Get the LAN IP address.
 		printf("LAN IP address.\n");
-		system("ip route get 8.8.8.8 | awk 'NR==1 {print $NF}'");
+		system("hostname -I | awk '{print $1}'");
+
 		// Get the Internet facing IP address.
 		internetip();
 	}
