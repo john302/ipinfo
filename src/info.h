@@ -121,7 +121,7 @@ int menu(void) {
 
 int internetip(void) {
 	printf("Internet facing IP address.\n");
-	execl("/usr/bin/curl", "/usr/bin/curl", "ipinfo.io/ip",NULL);
+	execl("/usr/bin/dig", "/usr/bin/dig", "+short", "myip.opendns.com", "@resolver1.opendns.com",NULL);
 	return EXIT_SUCCESS;
 };
 
