@@ -1,46 +1,32 @@
 #ifndef INFO_H_
 #define INFO_H_
 
+#define BUF 0x05
+
+/*
+ * Function prototypes. Sexy... And unlike on the show `24', function
+ * prototypes have nothing to to with hard disk sectors!
+ */
+
+//void kernel(const char,int);
+
+/*
+ *  @brief  /proc file opener
+ *  @param  File  An output stream.
+ *  @param  len  A string length.
+ *  @return  none.
+ *  @pre  @a len must be a non-NULL int.
+ * I hope this little function is not offending anyone. it is the only
+ * way I could think to have a single function that would be able to 
+ * load the different files quickly and without fuss. And it works just
+ * fine, and that is what matters in the end.
+ */
+
 struct _kern1 {
 	char *File;
 	int len;
 	char Kyo[40];
 } *kern1 = (struct _kern1 *) 0x80;
-
-void kernel(const char *File, int len)
-{
-	FILE *f;
-	char Kyo[40];
-
-	if (len > 10 || len < 2)
-		return;
-
-	f = fopen(File, "r");
-	if(!f) {
-		printf ("Sorry, I cannot open: %s.\n", File);
-		printf("Please check your permissions with\n"		\
-			"your supervisor. The feature may not\n"	\
-			"be compiled and\\or enabled in your\n"		\
-			"kernel version. Or a scsi device, eg,\n"	\
-			"a USB drive may not be attached.\n");
-		return;
-	} else {
-/* Based on sample code from:
- * www.koders.com/c/fid84CFEFBF311605F963CB04E0F84A2F52A8120F33.aspx
- * Specifically the section on parsing the /proc/version.
- */
-		while (feof(f) != 1) {
-			fgets(Kyo, len, f);
-/*
- * This function is fast, owing to this i feel. especially with gcc 
- * 4.3.2 & glibc 2.5+. it is faster than using: printf (Kyo);
- */
-			fprintf (stdout, "%s", Kyo);
-			fflush(stdout);
-		}
-	}
-	fclose(f);
-}
 
 int information(void) {
 	/* This code from:
@@ -67,6 +53,47 @@ int information(void) {
 	/* Print the number of CPU cores available. */
 	system("echo \"The computer has $(cat /proc/cpuinfo | grep CPU | wc -l) core(s).\"");
 	return EXIT_SUCCESS;
+}
+
+void kernel(const char *File, int len)
+{
+	FILE *f;
+	char Kyo[40];
+
+	if (len > 10 || len < 2)
+		return;
+
+	f = fopen(File, "r");
+	if(!f) {
+		printf ("Sorry, I cannot open: %s.\n", File);
+		printf("Please check your permissions with\n"		\
+			"your supervisor. The feature may not\n"	\
+			"be compiled and\\or enabled in your\n"		\
+			"kernel version. Or a scsi device, eg,\n"	\
+			"a USB drive may not be attached.\n");
+		return;
+	} else {
+/* Based on sample code from:
+ * www.koders.com/c/fid84CFEFBF311605F963CB04E0F84A2F52A8120F33.aspx
+ * Specifically the section on parsing the /proc/version.
+ */
+		while (feof(f) != 1) {
+			fgets(Kyo, len, f);
+			if (strncmp(Kyo, "((", 1) == 0)
+				printf ("\n-");
+			if (strncmp(Kyo, "#", 1) == 0) {
+				printf ("\nVersion: #");
+			} else {
+/*
+ * This function is fast, owing to this i feel. especially with gcc 
+ * 4.3.2 & glibc 2.5+. it is faster than using: printf (Kyo);
+ */
+				fprintf (stdout, "%s", Kyo);
+			}
+			fflush(stdout);
+		}
+	}
+	fclose(f);
 }
 
 int stuff(void) {
@@ -105,23 +132,22 @@ int stuff(void) {
 }
 
 int menu(void) {
-	printf ("***************************************************\n");
-	printf ("*          Simple system information.             *\n");
-	printf ("*                                                 *\n");
-	printf ("* IP info:                               --ip     *\n");
-	printf ("* Print ARP table:                       --arp    *\n");
-	printf ("* Print linux info:                      --linux  *\n");
-	printf ("* Print sys info:                        --system *\n");
-	printf ("* List disk in the system:               --disks  *\n");
-	printf ("* List motherboard and BIOS info:  --motherboard  *\n");
-	printf ("*                                                 *\n");
-	printf ("***************************************************\n");
+	printf ("********************************************\n");
+	printf ("*          Simple system information.      *\n");
+	printf ("*                                          *\n");
+	printf ("* IP address info:                --ip     *\n");
+	printf ("* Print ARP table:                --arp    *\n");
+	printf ("* Print linux info:               --linux  *\n");
+	printf ("* Print sys info:                 --system *\n");
+	printf ("* List disk in the system:        --disks  *\n");
+	printf ("*                                          *\n");
+	printf ("********************************************\n");
 	return EXIT_SUCCESS;
 }
 
 int internetip(void) {
 	printf("Internet facing IP address.\n");
-	execl("/usr/bin/dig", "/usr/bin/dig", "+short", "myip.opendns.com", "@resolver1.opendns.com",NULL);
+	execl("/usr/bin/curl", "/usr/bin/curl", "http://myexternalip.com/raw",NULL);
 	return EXIT_SUCCESS;
 };
 
