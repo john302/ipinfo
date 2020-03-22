@@ -1,5 +1,6 @@
 #include <linux/kernel.h>       /* for struct sysinfo */
 #include <sys/sysinfo.h>        /* For the sysinfo struct. */
+#include <sys/statvfs.h>
 #include <stdio.h>
 #include <string.h>		/* for strncpy */
 #include <unistd.h>		/* for close */
@@ -21,6 +22,13 @@
 int main (int argc, char **argv) {
 
 	char hostname[128];
+	unsigned long  hdd_size;
+	unsigned long  hdd_free;
+
+	struct sysinfo info;
+	sysinfo( &info );
+	struct statvfs fsinfo;
+	statvfs("/", &fsinfo);
 
 	if (argv[1] == NULL) {
 		menu();
@@ -39,6 +47,7 @@ int main (int argc, char **argv) {
 		information();
 		// Print the GNU Libc version.
 		printf("GNU libc version: %s\n", gnu_get_libc_version());
+		stuff();
 	}
 
 	if (argc > 1 && strncmp (argv[1], "--hostname", BUF) == 0) {
@@ -52,6 +61,7 @@ int main (int argc, char **argv) {
 		printf("-----------------------------------------------------\n\n\n");
                 iface();
 		// Get the Internet facing IP address.
+		//fflush(stdout);
 		printf("Printing the TCP table.\n");
 		printf("-----------------------------------------------------\n\n\n");
 //		internetip();
@@ -60,12 +70,14 @@ int main (int argc, char **argv) {
 
 	if (argc > 1 && strncmp (argv[1], "--disks", BUF) == 0) {
 		// List the hard disks attached to the system.
-		execl("/bin/lsblk", "/bin/lsblk", "-d",NULL);
-	}
 
-	if (argc > 1 && strncmp (argv[1], "--linux", BUF) == 0) {
-		// Print system information.
-		stuff();
+		hdd_size = fsinfo.f_frsize * fsinfo.f_blocks;
+		hdd_free = fsinfo.f_bsize * fsinfo.f_bfree;
+
+		unsigned long capacity = hdd_size / 1000 / 1000 / 1000;
+		unsigned long freesize = hdd_free / 1000 / 1000 / 1000;
+		printf("The HDD size is %lu gigabytes, and has %lu gigabytes free.\n\n", capacity, freesize);
+		execl("/bin/lsblk", "/bin/lsblk", "-d", "-S", "-n",NULL);
 	}
 
 	return 0;
